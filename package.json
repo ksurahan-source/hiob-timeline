@@ -1,7 +1,6 @@
 {
   "name": "@hiob/timeline",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.1",
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
@@ -12,8 +11,13 @@
     "./adapters/reelDocument": "./src/adapters/reelDocumentAdapter.ts",
     "./adapters/renderJob": "./src/adapters/renderJobAdapter.ts"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "dependencies": {
     "zod": "^3.24.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
