@@ -36,6 +36,10 @@ const KeyframeSchema = z.object({
   rotation: z.number().optional(),
   blur: z.number().min(0).optional(),
   brightness: z.number().min(0).optional(),
+  // Per-keyframe easing for the OUTGOING segment (this kf → next). Falls back to
+  // the parent animation's easing when omitted. Enables anticipation/overshoot
+  // mid-animation (the "손맛"), matching the live clips[].keyframes path.
+  easing: Easing.optional(),
 }).describe('A single keyframe in a property animation');
 
 const PropertyAnimationSchema = z.object({
@@ -46,7 +50,21 @@ const PropertyAnimationSchema = z.object({
   keyframes: z.array(KeyframeSchema).min(2).describe('At least start and end keyframes'),
 }).describe('Property-based keyframe animation');
 
-const AnimationSchema = PropertyAnimationSchema.describe('Element animation');
+// Reference a named motion preset from the AnimationRegistry (ken-burns, snap-zoom-in,
+// overshoot-pop, …) instead of hand-authoring keyframes. This is what lets a ReelDoc
+// SAY "apply this Envato-grade template" — the renderer resolves it via getPreset().
+const PresetAnimationRefSchema = z.object({
+  type: z.literal('preset'),
+  presetId: z.string().min(1).describe('AnimationRegistry preset id, e.g. "snap-zoom-in"'),
+  startTime: DurationMs.default(0).describe('Start time offset within the element'),
+  duration: DurationMs.describe('Duration of the preset animation'),
+  intensity: z.enum(['subtle', 'medium', 'strong']).default('medium'),
+}).describe('Named-preset animation reference');
+
+const AnimationSchema = z.discriminatedUnion('type', [
+  PropertyAnimationSchema,
+  PresetAnimationRefSchema,
+]).describe('Element animation (keyframe property animation or named-preset reference)');
 
 // ── Fill ─────────────────────────────────────────────────────────────────────
 
