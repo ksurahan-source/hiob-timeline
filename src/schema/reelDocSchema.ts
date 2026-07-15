@@ -301,11 +301,32 @@ export const ReelDocSchema = z.object({
   description: z.string().optional(),
   outputFormat: OutputFormatSchema,
   elements: z.array(ElementSchema),
+  /**
+   * @deprecated LP10-4 (Editor·D) — zombie field. Consumers: 0 (grep 2026-07-15:
+   * studio/timeline/compositions/hephaestus). Kept for schema-compat only.
+   * **Removal notice:** drop in next major ReelDoc version once stored docs are scrubbed.
+   */
   zIndexLayers: z.array(ZIndexLayerSchema).optional(),
   brandKit: BrandKitSchema.optional().describe('Inline brand kit'),
   brandKitId: z.string().uuid().optional().describe('Reference to stored brand kit'),
+  /**
+   * @deprecated LP10-4 (Editor·D) — zombie field (animationLibrary). Consumers: 0.
+   * Motion lives on elements[].animation / clip.keyframes + AnimationRegistry presets.
+   * **Removal notice:** remove with zIndexLayers / easingLibrary / customAnimations
+   * in next major ReelDoc version. Do not write new producers against this field.
+   */
   animationLibrary: BuiltinEffectsSchema,
+  /**
+   * @deprecated LP10-4 (Editor·D) — zombie field (easingLibrary). Consumers: 0.
+   * Per-keyframe `easing` on KeyframeSchema / clip keyframes is the live path.
+   * **Removal notice:** next major ReelDoc version.
+   */
   easingLibrary: EasingLibrarySchema,
+  /**
+   * @deprecated LP10-4 (Editor·D) — zombie field (customAnimations). Consumers: 0.
+   * Named presets: PresetAnimationRefSchema + AnimationRegistry, not this array.
+   * **Removal notice:** next major ReelDoc version.
+   */
   customAnimations: z.array(PresetAnimationSchema).optional(),
   variables: z.record(z.string(), VariableDefinitionSchema).optional(),
   audioMix: AudioMixSchema.optional(),
