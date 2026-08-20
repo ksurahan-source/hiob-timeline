@@ -4,7 +4,7 @@
  */
 import { interpolateTemplate } from '../templateVariables.ts';
 import type { Brief } from '../../types/Brief.ts';
-import { test } from 'vitest';
+import { expect, test } from 'vitest';
 
 test('interpolates template variables without mutating the source', () => {
 
@@ -127,4 +127,5 @@ console.log(`\n→ VERIFY interpolateTemplate: ${passed}/${total} passed`);
 if (failed > 0) {
   throw new Error(`${failed} template interpolation assertions failed`);
 }
+expect(failed).toBe(0);
 });

@@ -6,7 +6,7 @@
  * that delegates to the real Supabase PostgREST API.
  */
 import fs from 'node:fs';
-import { describe, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 const liveEnabled = process.env.HIOB_TIMELINE_LIVE_TESTS === '1';
 
@@ -287,5 +287,6 @@ await cleanup();
 const total = passed + failed;
 console.log(`\n→ VERIFY ENG-03 adapters: ${passed}/${total} passed`);
 if (failed > 0) throw new Error(`${failed} live adapter assertions failed`);
+expect(failed).toBe(0);
 });
 });
