@@ -11,7 +11,7 @@ import {
   serializeProjectFile,
   sha256Hex,
 } from './serialize.ts';
-import type { Asset, Clip, Timeline, TimelineTrack } from './types.ts';
+import type { Asset, Clip, EffectKind, Timeline, TimelineTrack } from './types.ts';
 
 const NOW = '2026-08-20T00:00:00.000Z';
 
@@ -193,6 +193,8 @@ describe('caption and beat contracts', () => {
 });
 
 test('public API and root schema failure remain available', () => {
+  const compositionEffects: EffectKind[] = ['opacity', 'blend', 'mask', 'chroma-key'];
+  expect(compositionEffects).toHaveLength(4);
   expect(publicApi.HIOB_SCHEMA_VERSION).toBe(1);
   expect(publicApi.timelineToRenderProps).toBe(timelineToRenderProps);
   expect(publicApi.interpolateTemplate({ headline: 'before {{unfinished' }, {})).toEqual({
