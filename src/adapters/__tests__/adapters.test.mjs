@@ -6,9 +6,17 @@
  * that delegates to the real Supabase PostgREST API.
  */
 import fs from 'node:fs';
+import { describe, expect, test } from 'vitest';
+
+const liveEnabled = process.env.HIOB_TIMELINE_LIVE_TESTS === '1';
+
+describe.skipIf(!liveEnabled)('timeline adapters live contract', () => {
+test('round-trips documents and render jobs against the approved database', async () => {
 
 // ── env ──────────────────────────────────────────────────────────────────────
-const env = fs.readFileSync('/home/surahanchoi/hiob/.env.master.local', 'utf8');
+const envPath = process.env.HIOB_MASTER_ENV_PATH;
+if (!envPath) throw new Error('HIOB_MASTER_ENV_PATH is required for live tests');
+const env = fs.readFileSync(envPath, 'utf8');
 const get = (k) => { const m = env.match(new RegExp('^' + k + '=(.*)$', 'm')); return m ? m[1].trim() : ''; };
 const URL_ = get('NEXT_PUBLIC_SUPABASE_URL');
 const KEY  = get('SUPABASE_SECRET_KEY');
@@ -278,4 +286,7 @@ console.log('\n9. RenderJobAdapter: getRenderJobsByStatus');
 await cleanup();
 const total = passed + failed;
 console.log(`\n→ VERIFY ENG-03 adapters: ${passed}/${total} passed`);
-if (failed > 0) process.exit(1);
+if (failed > 0) throw new Error(`${failed} live adapter assertions failed`);
+expect(failed).toBe(0);
+});
+});

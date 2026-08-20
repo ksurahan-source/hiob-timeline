@@ -89,6 +89,7 @@ export type EffectKind =
   | 'caption-glow' | 'caption-flame' | 'sticker' | 'watermark'
   | 'transition' | 'filter' | 'adjust' // Phase 15 G1/G2/G3 — transition, color look, color grade
   | 'speed-ramp' | 'chromatic-split' | 'light-sweep' // visual_editor 2026-06-16 — editorial whip, RGB-split fringe, specular glint sweep
+  | 'opacity' | 'blend' | 'mask' | 'chroma-key' // CapCut-compatible compositing controls consumed by compositions
   | 'emoji-overlay'; // EDIT-4.1: emotion-driven emoji overlay (pop/scale-pop/bounce)
 
 export interface Effect {
@@ -226,8 +227,6 @@ export interface Timeline {
   markers: Marker[];
   mix: Mix;
   tracks: TimelineTrack[];
-  /** ISO 639-1 language code for rendering locale (e.g., 'ko', 'en', 'zh'); defaults to 'ko'. */
-  locale?: string;
   createdAt: string;
   updatedAt: string;
 }
