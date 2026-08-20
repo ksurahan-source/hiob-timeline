@@ -226,8 +226,6 @@ export interface Timeline {
   markers: Marker[];
   mix: Mix;
   tracks: TimelineTrack[];
-  /** ISO 639-1 language code for rendering locale (e.g., 'ko', 'en', 'zh'); defaults to 'ko'. */
-  locale?: string;
   createdAt: string;
   updatedAt: string;
 }
