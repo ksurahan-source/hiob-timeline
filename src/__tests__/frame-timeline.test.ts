@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
-import { compileFrameTimeline } from '../src/frame-timeline.ts';
+import { test } from 'vitest';
+import { compileFrameTimeline } from '../frame-timeline.ts';
 
 const hash = 'a'.repeat(64);
 export function fixture(seconds = 48) {

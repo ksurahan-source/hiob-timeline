@@ -1,6 +1,24 @@
 import type { Brief } from '../types/Brief.ts';
 
-const VAR_RE = /\{\{([^}]+)\}\}/g;
+function interpolateString(
+  source: string,
+  variables: Record<string, unknown>,
+): string {
+  let cursor = 0;
+  let output = '';
+  while (cursor < source.length) {
+    const opening = source.indexOf('{{', cursor);
+    if (opening < 0) return output + source.slice(cursor);
+    const closing = source.indexOf('}}', opening + 2);
+    if (closing < 0) return output + source.slice(cursor);
+    const name = source.slice(opening + 2, closing).trim();
+    const replacement = variables[name];
+    output += source.slice(cursor, opening);
+    output += replacement != null ? String(replacement) : `{{${name}}}`;
+    cursor = closing + 2;
+  }
+  return output;
+}
 
 /**
  * Substitute `{{variable}}` placeholders in all string fields of a Brief template.
@@ -25,11 +43,7 @@ export function interpolateTemplate(
   const out: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(template)) {
     if (typeof value === 'string') {
-      out[key] = value.replace(VAR_RE, (_match, rawName: string) => {
-        const name = rawName.trim();
-        const replacement = variables[name];
-        return replacement != null ? String(replacement) : `{{${name}}}`;
-      });
+      out[key] = interpolateString(value, variables);
     } else if (
       value !== null &&
       typeof value === 'object' &&

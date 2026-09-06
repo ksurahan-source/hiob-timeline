@@ -66,6 +66,21 @@ export interface RenderProps {
   locale?: string | null;
 }
 
+function resolveVolume(
+  track: TimelineTrack,
+  clip: Clip,
+  mix: Timeline['mix'],
+): number | undefined {
+  if (track.muted) return 0;
+  if (clip.volume != null) return clip.volume;
+  const mixByKind: Partial<Record<TimelineTrack['kind'], number>> = {
+    audio: mix.voice,
+    music: mix.music,
+    sfx: mix.sfx,
+  };
+  return mixByKind[track.kind];
+}
+
 export function timelineToRenderProps(timeline: Timeline, assets: Asset[]): RenderProps {
   const assetById = new Map(assets.map((a) => [a.id, a] as const));
   const clips: RenderClip[] = [];
@@ -73,10 +88,6 @@ export function timelineToRenderProps(timeline: Timeline, assets: Asset[]): Rend
   // sort tracks by ord, then by z-index inside
   const tracks = [...timeline.tracks].sort((a, b) => a.ord - b.ord);
   for (const track of tracks) {
-    if (!track.visible || track.muted && (track.kind === 'audio' || track.kind === 'music' || track.kind === 'sfx')) {
-      // muted audio tracks still flow through so previews can show them as silent
-      // (the renderer sets volume to 0 in that case)
-    }
     for (const clip of track.clips) {
       const asset = clip.assetId ? assetById.get(clip.assetId) : undefined;
       clips.push({
@@ -96,13 +107,7 @@ export function timelineToRenderProps(timeline: Timeline, assets: Asset[]): Rend
         effects: clip.effects,
         keyframes: clip.keyframes,
         attributes: clip.attributes,
-        volume:
-          track.muted ? 0
-          : clip.volume != null ? clip.volume
-          : track.kind === 'audio' ? timeline.mix.voice
-          : track.kind === 'music' ? timeline.mix.music
-          : track.kind === 'sfx'   ? timeline.mix.sfx
-          : undefined,
+        volume: resolveVolume(track, clip, timeline.mix),
       });
     }
   }
