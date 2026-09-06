@@ -37,7 +37,10 @@ export const frameTimelineSchema = z.object({
   captions: z.array(z.object({ id, narrationId: id, text: z.string().min(1).max(240), startSample: sample, endSample: sample.positive() }).strict()).max(512),
 }).strict();
 
-export type FrameTimeline = z.infer<typeof frameTimelineSchema>;
+// Every schema field is required. Preserve that fact for consumers that compile
+// exported TS sources without strictNullChecks (Zod inference makes them optional).
+type RequiredFields<T> = T extends object ? { [K in keyof T]-?: RequiredFields<T[K]> } : T;
+export type FrameTimeline = RequiredFields<z.infer<typeof frameTimelineSchema>>;
 export type FrameAsset = FrameTimeline['assets'][number];
 export type FrameCaption = FrameTimeline['captions'][number] & { startFrame: number; endFrame: number };
 export type CompiledFrameTimeline = Omit<FrameTimeline, 'captions'> & { captions: FrameCaption[] };
@@ -64,7 +67,7 @@ function ordered<T extends { startFrame: number; endFrame: number }>(entries: T[
  * A caller must separately verify receipt authority and asset bytes/metadata.
  */
 export function compileFrameTimeline(input: unknown): CompiledFrameTimeline {
-  const timeline = frameTimelineSchema.parse(input);
+  const timeline = frameTimelineSchema.parse(input) as FrameTimeline;
   const { totalFrames, duration } = timeline;
   requireCondition(timeline.width * 16 === timeline.height * 9, 'DIMENSIONS');
   requireCondition(duration.mode === 'exact'
