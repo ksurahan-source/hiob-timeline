@@ -317,8 +317,8 @@ describe('RenderJobAdapter', () => {
     if (status === 'processing') expect(update.started_at).toEqual(expect.any(String));
     if (status === 'done') expect(update.completed_at).toEqual(expect.any(String));
     if (status === 'failed') expect(update.completed_at).toEqual(expect.any(String));
-    if (params?.outputUrl && status === 'done') expect(update.output_url).toBe(params.outputUrl);
-    if (params?.error) expect(update.remotion_error).toBe(params.error);
+    if (params && 'outputUrl' in params && params.outputUrl && status === 'done') expect(update.output_url).toBe(params.outputUrl);
+    if (params && 'error' in params && params.error) expect(update.remotion_error).toBe(params.error);
   });
 
   test('reports status update failures', async () => {

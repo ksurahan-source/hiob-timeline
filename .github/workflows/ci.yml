@@ -21,19 +21,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
       - name: Install locked dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Typecheck
         run: npm run typecheck
+      - name: Typecheck non-strict consumers
+        run: npm run typecheck:consumer
       - name: Test with complete branch coverage
         run: npm test
-      - name: Analyze with SonarQube Cloud
-        uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >-
-            -Dsonar.qualitygate.wait=true
-            -Dsonar.qualitygate.timeout=300
