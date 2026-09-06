@@ -4,6 +4,7 @@
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
+    "./frame-timeline": "./src/frame-timeline.ts",
     ".": "./src/index.ts",
     "./serialize": "./src/serialize.ts",
     "./remotion-adapter": "./src/remotion-adapter.ts",
@@ -14,6 +15,10 @@
   "files": [
     "src"
   ],
+  "scripts": {
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "test:coverage": "node --experimental-strip-types --experimental-test-coverage --test test/*.test.ts"
+  },
   "dependencies": {
     "zod": "^3.24.4"
   },
