@@ -58,6 +58,8 @@ export interface Marker {
 }
 
 export interface Mix {
+  /** Absent/1: legacy clip override. 2: clip gain multiplied by its bus gain. */
+  version?: 1 | 2;
   voice: number;
   music: number;
   sfx: number;
@@ -65,6 +67,7 @@ export interface Mix {
   autoDuck?: boolean;
   /** Duck depth 0..1: how much to attenuate music during voice (default 0.7 → reduce to 30%). */
   duck?: number;
+  duckFadeMs?: number;
 }
 
 export interface Transforms {
@@ -88,6 +91,7 @@ export type EffectKind =
   | 'caption-pop' | 'caption-typewriter' | 'caption-border-sticker' | 'caption-style'
   | 'caption-glow' | 'caption-flame' | 'sticker' | 'watermark'
   | 'transition' | 'filter' | 'adjust' // Phase 15 G1/G2/G3 — transition, color look, color grade
+  | 'opacity' | 'blend' | 'mask' // Existing composition/editor effects.
   | 'speed-ramp' | 'chromatic-split' | 'light-sweep' // visual_editor 2026-06-16 — editorial whip, RGB-split fringe, specular glint sweep
   | 'emoji-overlay'; // EDIT-4.1: emotion-driven emoji overlay (pop/scale-pop/bounce)
 
@@ -226,8 +230,6 @@ export interface Timeline {
   markers: Marker[];
   mix: Mix;
   tracks: TimelineTrack[];
-  /** ISO 639-1 language code for rendering locale (e.g., 'ko', 'en', 'zh'); defaults to 'ko'. */
-  locale?: string;
   createdAt: string;
   updatedAt: string;
 }

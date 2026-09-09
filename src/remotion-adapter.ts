@@ -73,10 +73,7 @@ export function timelineToRenderProps(timeline: Timeline, assets: Asset[]): Rend
   // sort tracks by ord, then by z-index inside
   const tracks = [...timeline.tracks].sort((a, b) => a.ord - b.ord);
   for (const track of tracks) {
-    if (!track.visible || track.muted && (track.kind === 'audio' || track.kind === 'music' || track.kind === 'sfx')) {
-      // muted audio tracks still flow through so previews can show them as silent
-      // (the renderer sets volume to 0 in that case)
-    }
+    if (!track.visible) continue;
     for (const clip of track.clips) {
       const asset = clip.assetId ? assetById.get(clip.assetId) : undefined;
       clips.push({
@@ -99,6 +96,7 @@ export function timelineToRenderProps(timeline: Timeline, assets: Asset[]): Rend
         volume:
           track.muted ? 0
           : clip.volume != null ? clip.volume
+          : timeline.mix.version === 2 ? undefined
           : track.kind === 'audio' ? timeline.mix.voice
           : track.kind === 'music' ? timeline.mix.music
           : track.kind === 'sfx'   ? timeline.mix.sfx
