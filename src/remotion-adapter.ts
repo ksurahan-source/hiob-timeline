@@ -73,6 +73,7 @@ function resolveVolume(
 ): number | undefined {
   if (track.muted) return 0;
   if (clip.volume != null) return clip.volume;
+  if (mix.version === 2) return undefined;
   const mixByKind: Partial<Record<TimelineTrack['kind'], number>> = {
     audio: mix.voice,
     music: mix.music,
@@ -88,6 +89,7 @@ export function timelineToRenderProps(timeline: Timeline, assets: Asset[]): Rend
   // sort tracks by ord, then by z-index inside
   const tracks = [...timeline.tracks].sort((a, b) => a.ord - b.ord);
   for (const track of tracks) {
+    if (!track.visible) continue;
     for (const clip of track.clips) {
       const asset = clip.assetId ? assetById.get(clip.assetId) : undefined;
       clips.push({

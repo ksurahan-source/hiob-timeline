@@ -58,6 +58,8 @@ export interface Marker {
 }
 
 export interface Mix {
+  /** Absent/1: legacy clip override. 2: clip gain multiplied by its bus gain. */
+  version?: 1 | 2;
   voice: number;
   music: number;
   sfx: number;
@@ -65,6 +67,7 @@ export interface Mix {
   autoDuck?: boolean;
   /** Duck depth 0..1: how much to attenuate music during voice (default 0.7 → reduce to 30%). */
   duck?: number;
+  duckFadeMs?: number;
 }
 
 export interface Transforms {
