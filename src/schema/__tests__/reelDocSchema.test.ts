@@ -4,6 +4,9 @@
  */
 import { ReelDocSchema, validateReelDoc } from '../reelDocSchema.ts';
 import type { ReelDoc } from '../reelDocSchema.ts';
+import { expect, test } from 'vitest';
+
+test('validates the ReelDoc contract and representative element shapes', () => {
 
 let passed = 0;
 let failed = 0;
@@ -286,5 +289,7 @@ console.log('\n8. Type-safe exports');
 const total = passed + failed;
 console.log(`\n→ VERIFY ReelDocSchema: ${passed}/${total} passed`);
 if (failed > 0) {
-  process.exit(1);
+  throw new Error(`${failed} ReelDoc assertions failed`);
 }
+expect(failed).toBe(0);
+});
